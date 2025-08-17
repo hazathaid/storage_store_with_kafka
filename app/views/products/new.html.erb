@@ -1,0 +1,55 @@
+<h1 class="f2-light mb-4">New Product</h1>
+
+<%= primer_form_with url: products_url do |f| %>
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: "code",
+        label: "Code",
+        required: true,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: "name",
+        label: "Name",
+        required: true,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: "price",
+        label: "Price",
+        required: true,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: "stock",
+        label: "Stock",
+        required: true,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextArea.new(
+        name: "description",
+        id: "description",
+        label: "Description",
+        rows: 4,
+        visually_hide_label: false,
+        inset: true
+      ) %>
+  </div>
+
+  <%= render(Primer::Beta::Button.new(type: :submit, scheme: :primary, block: true)) { "Save" } %>
+<% end %>

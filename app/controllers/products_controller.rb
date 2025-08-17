@@ -1,4 +1,7 @@
 class ProductsController < ApplicationController
+  def new
+  end
+
   def create
     kafka = Kafka.new([ "localhost:9092" ], client_id: "storage_rails")
     data = {
@@ -9,6 +12,10 @@ class ProductsController < ApplicationController
       description: params[:description]
     }.to_json
      kafka.deliver_message(data, topic: "storage-product")
-     render json: { status: "Product Successfully sent to Kafka", data: data }
+     if request.format.json?
+      render json: { status: "Product Successfully sent to Kafka", data: data }
+     else
+      redirect_to new_product_url, notice: "Product created successfully"
+     end
   end
 end

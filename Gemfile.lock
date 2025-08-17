@@ -110,6 +110,8 @@ GEM
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
+    jsbundling-rails (1.3.1)
+      railties (>= 6.0.0)
     json (2.13.2)
     king_konf (1.0.1)
     language_server-protocol (3.17.0.5)
@@ -154,6 +156,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.9-x86_64-linux-musl)
       racc (~> 1.4)
+    octicons (19.15.5)
     parallel (1.27.0)
     parser (3.3.9.0)
       ast (~> 2.4.1)
@@ -161,6 +164,11 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    primer_view_components (0.44.0)
+      actionview (>= 7.2.0)
+      activesupport (>= 7.2.0)
+      octicons (>= 18.0.0)
+      view_component (>= 3.1, < 5.0)
     prism (1.4.0)
     psych (5.2.6)
       date
@@ -268,6 +276,14 @@ GEM
       digest-crc
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    sprockets (4.2.2)
+      concurrent-ruby (~> 1.0)
+      logger
+      rack (>= 2.2.4, < 4)
+    sprockets-rails (3.5.2)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      sprockets (>= 3.0.0)
     sqlite3 (2.7.3-aarch64-linux-gnu)
     sqlite3 (2.7.3-aarch64-linux-musl)
     sqlite3 (2.7.3-arm-linux-gnu)
@@ -276,15 +292,23 @@ GEM
     sqlite3 (2.7.3-x86_64-darwin)
     sqlite3 (2.7.3-x86_64-linux-gnu)
     sqlite3 (2.7.3-x86_64-linux-musl)
+    stimulus-rails (1.3.4)
+      railties (>= 6.0.0)
     stringio (3.1.7)
     thor (1.4.0)
     timeout (0.4.3)
+    turbo-rails (2.0.16)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.5)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
     useragent (0.16.11)
+    view_component (4.0.2)
+      activesupport (>= 7.1.0, < 8.1)
+      concurrent-ruby (~> 1)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -307,12 +331,17 @@ DEPENDENCIES
   bootsnap
   brakeman
   debug
+  jsbundling-rails
+  primer_view_components
   puma (>= 5.0)
   racecar
   rails (~> 7.2.2, >= 7.2.2.2)
   rubocop-rails-omakase
   ruby-kafka
+  sprockets-rails
   sqlite3 (>= 1.4)
+  stimulus-rails
+  turbo-rails
   tzinfo-data
 
 BUNDLED WITH

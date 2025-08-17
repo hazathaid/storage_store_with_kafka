@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@primer/css": "^22.0.2",
+    "@primer/view-components": "^0.44.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.9"
+  },
+  "scripts": {
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
+  }
+}
