@@ -12,15 +12,17 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-    <%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
   </head>
 
-  <body>
+  <body data-color-mode="light" data-light-theme="light" data-dark-theme="dark">
     <% flash.each do |key, message| %>
-    <div class="flash <%= key %>">
-      <%= message %>
-    </div>
-  <% end %>
+      <div class="flash <%= key %>">
+        <%= message %>
+      </div>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

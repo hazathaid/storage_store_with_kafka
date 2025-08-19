@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@primer/css": "^22.0.2",
+    "@primer/primitives": "^11.1.0",
     "@primer/view-components": "^0.44.0"
   },
   "devDependencies": {

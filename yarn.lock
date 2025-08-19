@@ -223,6 +223,11 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.2.1"
 
+"@primer/primitives@^11.1.0":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@primer/primitives/-/primitives-11.1.0.tgz#754546e9d007cbc6f389fca79aa8def2a2b28250"
+  integrity sha512-edsofzVG67EobXGRrqFc/kfjzKh8wbq1wEmRc1vmRNqDJNMxBRWZ9bT2AzKvcv+Hbf7olDAPkrSqVHbO4hhr/A==
+
 "@primer/view-components@^0.44.0":
   version "0.44.0"
   resolved "https://registry.yarnpkg.com/@primer/view-components/-/view-components-0.44.0.tgz#c9bb228973b27da4e9fe5b3b6d27d16479727522"
