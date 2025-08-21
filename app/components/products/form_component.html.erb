@@ -1,0 +1,60 @@
+<%= primer_form_with model: @product do |f| %>
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: f.field_name(:code),
+        label: "Code",
+        required: true,
+        value: f.object.code,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: f.field_name(:name),
+        label: "Name",
+        required: true,
+        value: f.object.name,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: f.field_name(:price),
+        label: "Price",
+        required: true,
+        value: f.object.price,
+        visually_hide_label: false,
+        type: :number,
+        inset: false
+      ) %>
+  </div>
+
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextField.new(
+        name: f.field_name(:stock),
+        label: "Stock",
+        required: true,
+        value: f.object.stock,
+        type: :number,
+        visually_hide_label: false,
+        inset: false
+      ) %>
+  </div>
+  <div class="mb-3">
+    <%= render Primer::Alpha::TextArea.new(
+        name: f.field_name(:description),
+        id: "description",
+        label: "Description",
+        value: f.object.description,
+        rows: 4,
+        visually_hide_label: false,
+        inset: true
+      ) %>
+  </div>
+
+  <%= render(Primer::Beta::Button.new(type: :submit, scheme: :primary, block: true)) { "Save" } %>
+<% end %>
