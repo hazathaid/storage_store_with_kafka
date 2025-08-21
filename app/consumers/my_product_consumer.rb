@@ -1,12 +1,26 @@
 class MyProductConsumer < Racecar::Consumer
   subscribes_to "storage-product"
 
-  def process(parameter)
-    data = JSON.parse(parameter.value, symbolize_names: true)
-    product = Product.find_or_initialize_by(code: data[:code])
-    product.update(name: data[:name], description: data[:description], price: data[:price], stock: data[:stock])
-    Rails.logger.info "Success Saved Product #{product.code}"
-  rescue => e
-    Rails.logger.error("Something When Wrong #{e.message}")
+  def process(message)
+    data = parse_message(message.value)
+
+    ProductSyncService.new(data).call
+    log_success(data)
+  rescue StandardError => e
+    Rails.logger.error("Something Went Wrong: #{e.message}")
+  end
+
+  private
+
+  def parse_message(value)
+    JSON.parse(value, symbolize_names: true)
+  end
+
+  def log_success(data)
+    if data[:action] == "destroy"
+      Rails.logger.info "Successfully Product #{data[:id]} deleted"
+    else
+      Rails.logger.info "Successfully Product #{data[:code]} synced"
+    end
   end
 end

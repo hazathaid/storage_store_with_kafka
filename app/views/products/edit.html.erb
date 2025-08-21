@@ -1,5 +1,5 @@
 <div class="container-lg p-4">
   <%= render Primer::Beta::Button.new(tag: :a, href: products_path, scheme: :default, classes: "float-right mb-3") do %>List Product<% end %>
-  <h1 class="f2-light mb-4 text-center">New Product</h1>
+  <h1 class="f2-light mb-4 text-center">Edit Product - <%= @product.name %></h1>
   <%= render Products::FormComponent.new(product: @product) %>
 </div>
