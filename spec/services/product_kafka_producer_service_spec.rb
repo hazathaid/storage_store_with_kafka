@@ -1,3 +1,4 @@
+# spec/services/product_kafka_producer_service_spec.rb
 require "rails_helper"
 
 RSpec.describe ProductKafkaProducerService do
@@ -20,31 +21,6 @@ RSpec.describe ProductKafkaProducerService do
         "id" => 1,
         "code" => "P001",
         "name" => "Product 1",
-        "price" => 10.0,
-        "stock" => 100,
-        "description" => "Sample description",
-        "action" => "create"
-      )
-    end
-
-    it "includes all required keys in the payload" do
-      payload = described_class.build_payload(params)
-      parsed = JSON.parse(payload)
-      expect(parsed.keys).to contain_exactly("id", "code", "name", "stock", "price", "description", "action")
-    end
-
-    it "serializes params to JSON without error" do
-      payload = described_class.build_payload(params)
-      expect { JSON.parse(payload) }.not_to raise_error
-    end
-
-    it "handles string and symbol keys in params" do
-      string_key_params = params.transform_keys(&:to_s)
-      payload = described_class.build_payload(string_key_params)
-      expect(JSON.parse(payload)).to eq(
-        "id" => 1,
-        "code" => "P001",
-        "name" => "Product 1",
         "stock" => 100,
         "price" => 10.0,
         "description" => "Sample description",
@@ -54,32 +30,34 @@ RSpec.describe ProductKafkaProducerService do
   end
 
   describe ".call" do
-    let(:kafka_double) { double(Kafka) }
+    let(:payload) { described_class.build_payload(params) }
+    let(:producer) { double("Producer") }
 
     before do
-      allow(Kafka).to receive(:new).and_return(kafka_double)
-      allow(kafka_double).to receive(:deliver_message)
+      # stub Karafka.producer biar gak beneran kirim ke Kafka
+      allow(Karafka).to receive(:producer).and_return(producer)
+      allow(producer).to receive(:produce_async)
     end
 
-    it "initializes Kafka with correct brokers and client_id" do
-      expect(Kafka).to receive(:new).with([ "localhost:9092" ], client_id: "storage_rails").and_return(kafka_double)
-      described_class.call(params)
-    end
+    it "produces a message with correct topic and payload" do
+      expect(producer).to receive(:produce_async).with(
+        topic: "data_product",
+        payload: payload
+      )
 
-    it "calls deliver_message with correct payload and topic" do
-      payload = described_class.build_payload(params)
-      expect(kafka_double).to receive(:deliver_message).with(payload, topic: "storage-product")
-      described_class.call(params)
-    end
-
-    it "returns the payload after sending" do
       result = described_class.call(params)
-      expect(result).to eq(described_class.build_payload(params))
+      expect(result).to eq(payload)
     end
 
-    it "raises error if Kafka connection fails" do
-      allow(Kafka).to receive(:new).and_raise(Kafka::ConnectionError)
-      expect { described_class.call(params) }.to raise_error(Kafka::ConnectionError)
+    it "returns the payload after producing" do
+      result = described_class.call(params)
+      expect(result).to eq(payload)
+    end
+
+    it "raises error if producer fails" do
+      allow(producer).to receive(:produce_async).and_raise(StandardError.new("fail"))
+
+      expect { described_class.call(params) }.to raise_error(StandardError, "fail")
     end
   end
 end

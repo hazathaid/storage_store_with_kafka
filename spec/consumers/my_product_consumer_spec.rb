@@ -3,6 +3,7 @@ require "rails_helper"
 
 RSpec.describe MyProductConsumer do
   let(:consumer) { described_class.new }
+
   let(:product_data) do
     {
       code: "P001",
@@ -21,39 +22,90 @@ RSpec.describe MyProductConsumer do
     }
   end
 
-  let(:message) { double("Racecar::Message", value: product_data.to_json) }
-  let(:destroy_message) { double("Racecar::Message", value: destroy_data.to_json) }
+  let(:product_message) { double("Karafka::Message", payload: product_data.to_json) }
+  let(:destroy_message) { double("Karafka::Message", payload: destroy_data.to_json) }
 
-  describe "#process" do
-    context "when action is create/update" do
-      it "calls ProductSyncService with parsed data and logs success" do
-        service = instance_double(ProductSyncService)
-        expect(ProductSyncService).to receive(:new).with(hash_including(product_data)).and_return(service)
-        expect(service).to receive(:call)
-        expect(Rails.logger).to receive(:info).with("Successfully Product P001 synced")
+  describe "#consume" do
+    it "logs consuming and processing, calls ProductSyncService, and logs success for create" do
+      allow(consumer).to receive(:messages).and_return([ product_message ])
 
-        consumer.process(message)
-      end
+      service = instance_double(ProductSyncService)
+      expect(Rails.logger).to receive(:info).with("Consuming messages from MyProductConsumer")
+      expect(Rails.logger).to receive(:info).with(/Processing message:/)
+      expect(ProductSyncService).to receive(:new).with(hash_including(product_data)).and_return(service)
+      expect(service).to receive(:call)
+      expect(Rails.logger).to receive(:info).with("Successfully Product P001 synced")
+
+      consumer.consume
     end
 
-    context "when action is destroy" do
-      it "calls ProductSyncService and logs destroy success" do
-        service = instance_double(ProductSyncService)
-        expect(ProductSyncService).to receive(:new).with(hash_including(destroy_data)).and_return(service)
-        expect(service).to receive(:call)
-        expect(Rails.logger).to receive(:info).with("Successfully Product 123 deleted")
+    it "logs consuming and processing, calls ProductSyncService, and logs success for destroy" do
+      allow(consumer).to receive(:messages).and_return([ destroy_message ])
 
-        consumer.process(destroy_message)
-      end
+      service = instance_double(ProductSyncService)
+      expect(Rails.logger).to receive(:info).with("Consuming messages from MyProductConsumer")
+      expect(Rails.logger).to receive(:info).with(/Processing message:/)
+      expect(ProductSyncService).to receive(:new).with(hash_including(destroy_data)).and_return(service)
+      expect(service).to receive(:call)
+      expect(Rails.logger).to receive(:info).with("Successfully Product 123 deleted")
+
+      consumer.consume
     end
 
-    context "when an error occurs" do
-      it "logs the error" do
-        allow(ProductSyncService).to receive(:new).and_raise(StandardError.new("fail"))
-        expect(Rails.logger).to receive(:error).with(/Something Went Wrong: fail/)
+    it "logs error when ProductSyncService raises" do
+      allow(consumer).to receive(:messages).and_return([ product_message ])
 
-        consumer.process(message)
-      end
+      expect(Rails.logger).to receive(:info).with("Consuming messages from MyProductConsumer")
+      expect(Rails.logger).to receive(:info).with(/Processing message:/)
+      expect(ProductSyncService).to receive(:new).and_raise(StandardError.new("fail"))
+      expect(Rails.logger).to receive(:error).with(/Something Went Wrong: fail/)
+
+      consumer.consume
+    end
+
+    it "logs error for unsupported payload type" do
+      bad_message = double("Karafka::Message", payload: 123)
+      allow(consumer).to receive(:messages).and_return([ bad_message ])
+
+      expect(Rails.logger).to receive(:info).with("Consuming messages from MyProductConsumer")
+      expect(Rails.logger).to receive(:info).with(/Processing message:/)
+      expect(Rails.logger).to receive(:error).with(/Something Went Wrong: Unsupported payload type: Integer/)
+
+      consumer.consume
+    end
+  end
+
+  describe "#parse_message" do
+    it "parses JSON string payload into symbolized hash" do
+      json = { code: "P001", action: "create" }.to_json
+      result = consumer.send(:parse_message, json)
+      expect(result).to eq(code: "P001", action: "create")
+    end
+
+    it "symbolizes keys if payload is a hash" do
+      hash = { "code" => "P002", "action" => "update" }
+      result = consumer.send(:parse_message, hash)
+      expect(result).to eq(code: "P002", action: "update")
+    end
+
+    it "raises error for unsupported payload type" do
+      expect {
+        consumer.send(:parse_message, 123)
+      }.to raise_error(ArgumentError, /Unsupported payload type: Integer/)
+    end
+  end
+
+  describe "#log_success" do
+    it "logs synced message for create/update" do
+      data = { code: "P003", action: "create" }
+      expect(Rails.logger).to receive(:info).with("Successfully Product P003 synced")
+      consumer.send(:log_success, data)
+    end
+
+    it "logs deleted message for destroy" do
+      data = { id: "456", action: "destroy" }
+      expect(Rails.logger).to receive(:info).with("Successfully Product 456 deleted")
+      consumer.send(:log_success, data)
     end
   end
 end
