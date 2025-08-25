@@ -178,9 +178,9 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
-    primer_view_components (0.43.6)
-      actionview (>= 7.1.0)
-      activesupport (>= 7.1.0)
+    primer_view_components (0.44.0)
+      actionview (>= 7.2.0)
+      activesupport (>= 7.2.0)
       octicons (>= 18.0.0)
       view_component (>= 3.1, < 5.0)
     prism (1.4.0)
@@ -359,7 +359,7 @@ DEPENDENCIES
   cssbundling-rails (~> 1.4)
   debug
   pg (>= 0.18, < 2.0)
-  primer_view_components (~> 0.43.6)
+  primer_view_components (~> 0.44.0)
   puma (>= 5.0)
   racecar
   rails (~> 7.2.2, >= 7.2.2.2)
