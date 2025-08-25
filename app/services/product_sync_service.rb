@@ -26,7 +26,7 @@ class ProductSyncService
   end
 
   def update_product(product)
-    product.assign_attributes(@data.except(:action))
+    product.assign_attributes(@data.except(:action, :id))
     product.save!
   end
 

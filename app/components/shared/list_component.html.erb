@@ -1,0 +1,25 @@
+<div class="container-lg p-4">
+  <h1 class="text-center">List <%= @data.model_name.name %></h1>
+  <%= render Primer::Beta::Button.new(tag: :a, href: new_product_path, scheme: :primary, classes: "float-right mb-3") do %>New Product<% end %>
+
+  <table class="d-table width-full border color-border-muted">
+    <tr>
+      <% @headers.each do |col| %>
+        <th class="p-2 border <%= 'action-col' if col == 'Action' %>" ><%= col %></th>
+      <% end %>
+    </tr>
+    <% @data.each do |row| %>
+      <tr>
+        <% @headers.each do |col| %>
+          <% if col != "Action"  %>
+            <td class="p-2 border"><%= row.send(col.downcase) %></td>
+          <%else%>
+            <td class="p-2 border text-center d-flex gap-1 justify-center">
+              <%= render(Shared::ActionLinksComponent.new(record: row)) %>
+            </td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>

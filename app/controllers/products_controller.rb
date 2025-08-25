@@ -1,7 +1,12 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: [ :edit, :update, :destroy ]
   def index
+    @headers = [ "Code", "Name", "Stock", "Price", "Description", "Action" ]
     @products = Product.all
+    respond_to do |format|
+      format.html
+      format.json { render json: { headers: @headers, data: @products } }
+    end
   end
   def new
     @product = Product.new
