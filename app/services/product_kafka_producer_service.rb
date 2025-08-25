@@ -1,12 +1,14 @@
 class ProductKafkaProducerService
-  KAFKA_BROKERS = [ "localhost:9092" ].freeze
-  CLIENT_ID = "storage_rails".freeze
-  TOPIC = "storage-product".freeze
+  TOPIC = "data_product".freeze
 
   def self.call(params)
-    kafka = Kafka.new(KAFKA_BROKERS, client_id: CLIENT_ID)
     data = build_payload(params)
-    kafka.deliver_message(data, topic: TOPIC)
+
+    Karafka.producer.produce_async(
+      topic: TOPIC,
+      payload: data
+    )
+
     data
   end
 
