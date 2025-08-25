@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.2.2", ">= 7.2.2.2"
+gem "rails", "~> 8.0.2"
 gem 'primer_view_components', '~> 0.43.6'
 gem "sprockets-rails"
 gem "turbo-rails"
